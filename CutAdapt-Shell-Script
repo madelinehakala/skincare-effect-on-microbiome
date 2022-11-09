@@ -84,6 +84,15 @@ cd KoreanSkincareRawSequenceData
     j=${i//sequencing_1.fastq.gz/sequencing_2.fastq.gz}
     echo "do something to $i and also to $j
    done
+   
+ #adapted from dr burns's code
+for read1 in *sequencing_1.fastq.gz
+do
+read2 =$(echo $read1 | sed 's/sequencing_1.fast1.gz/sequencing_2.fastq.gz/')
+out1=$(echo $read1 | sed 's/sequencing_1/sequencing_1.trimmed/')
+out2=$(echo $read2 | sed 's/sequencing_2/sequencing_2.trimmed/')
+#cutadapt
+done
 
 #can't get this part to work :( 
  
