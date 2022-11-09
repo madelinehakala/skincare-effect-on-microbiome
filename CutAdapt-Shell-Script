@@ -1,0 +1,16 @@
+#backup of shell script
+
+#!/usr/bin/env bash
+# To install Cutadapt: python3 -m pip install --user --upgrade cutadapt
+# To run Cutadapt (must include full path): ~/.local/bin/cutadapt --version
+
+#install using 
+python3 -m pip install --user --upgrade cutadapt
+
+#run using
+~/.local/bin/cutadapt --version
+#to enable paired end trimming, provide two input files and a second output file 
+#with the -p option (this is the short form of --paired-output)
+
+#run cutadapt with the first primer (16S v34_F and 16S v34_R)
+cutadapt -a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCCTACGGGNGGCWGCAG -A GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC -o KoreanSkincareTrimmedData/out.1.fastq -p KoreanSkincareTrimmedData/out.1.fastq KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
