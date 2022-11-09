@@ -1,5 +1,3 @@
-#backup of shell script
-
 #!/usr/bin/env bash
 # To install Cutadapt: python3 -m pip install --user --upgrade cutadapt
 # To run Cutadapt (must include full path): ~/.local/bin/cutadapt --version
@@ -12,5 +10,80 @@ python3 -m pip install --user --upgrade cutadapt
 #to enable paired end trimming, provide two input files and a second output file 
 #with the -p option (this is the short form of --paired-output)
 
+#should we be doing quality trimming?
+
+
 #run cutadapt with the first primer (16S v34_F and 16S v34_R)
-cutadapt -a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCCTACGGGNGGCWGCAG -A GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC -o KoreanSkincareTrimmedData/out.1.fastq -p KoreanSkincareTrimmedData/out.1.fastq KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
+~/.local/bin/cutadapt -a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCCTACGGGNGGCWGCAG -A GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC -o KoreanSkincareTrimmedData/out.1.fastq -p KoreanSkincareTrimmedData/out.2.fastq KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
+
+#output 
+
+# Minimum overlap: 3
+# No. of allowed errors:
+# 1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4
+# 
+# Bases preceding removed adapters:
+#   A: 36.4%
+#   C: 0.3%
+#   G: 23.0%
+#   T: 40.3%
+#   none/other: 0.0%
+# 
+# Overview of removed sequences
+# length  count   expect  max.err error counts
+# 3       329     1506.8  0       329
+# 4       1       376.7   0       1
+# 
+# 
+# === Second read: Adapter 2 ===
+# 
+# Sequence: GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC; Type: regular 3'; Length: 55; Trimmed: 110 times
+# 
+# Minimum overlap: 3
+# No. of allowed errors:
+# 1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4; 50-55 bp: 5
+# 
+# Bases preceding removed adapters:
+#   A: 27.3%
+#   C: 16.4%
+#   G: 9.1%
+#   T: 47.3%
+#   none/other: 0.0%
+# 
+# Overview of removed sequences
+# length  count   expect  max.err error counts
+# 3       97      1506.8  0       97
+# 4       9       376.7   0       9
+# 5       4       94.2    0       4
+
+
+#figure out loops???
+
+#for File in KoreanSkincareRawSequenceData; do <cutadapt>
+
+#this part is based on tutorial here:
+#https://github.com/raynamharris/Shell_Intro_for_Bioinformatics_STG/blob/master/lessons/06_ForLoops.md
+
+#create labels to separate _1 and _2 files into 
+#different categories
+
+#change working directory
+cd KoreanSkincareRawSequenceData
+
+#loop through files to output only forward reads
+ for i in *_1.fastq.gz
+ do
+    echo $i
+ done
+ #success!
+ 
+ #create a subset of reverse reads using this format
+ #newvariablename=${oldvariablename//oldtext/newtext}
+ for i in *sequencing_1.fastq.gz
+   do
+    j=${i//sequencing_1.fastq.gz/sequencing_2.fastq.gz}
+    echo "do something to $i and also to $j
+   done
+
+#can't get this part to work :( 
+ 
