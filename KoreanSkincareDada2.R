@@ -6,6 +6,9 @@
 #BiocManager::install(version = "3.15")
 #BiocManager::install("dada2", version = "3.15")
 
+save.image(file = "120322.Rdata")
+#load("120322.Rdata")
+
 
 # Load dada2 and check the version
 library("dada2"); packageVersion("dada2")
@@ -132,24 +135,19 @@ library(ggplot2); packageVersion("ggplot2")
 theme_set(theme_bw())
 
 # Code that extracts subject, gender, day and time (early/late) from sample names
-metadata <- read.table(file = 'KoreanSkincareMetadata.tsv', sep = '\t', header = TRUE)
-view(metadata)
-save.image(file = "112822.Rdata")
+metadata <- read.table(file = 'Metadata.txt', sep = ',', header = TRUE)
+View(metadata)
 
-# samples.out <- rownames(seqtab.nochim)
-# subject <- sapply(strsplit(samples.out, "D"), `[`, 1)
-# gender <- substr(subject,1,1)
-# subject <- substr(subject,2,999)
-# day <- as.integer(sapply(strsplit(samples.out, "D"), `[`, 2))
-# samdf <- data.frame(Subject=subject, Gender=gender, Day=day)
-# samdf$When <- "Early"
-# samdf$When[samdf$Day>100] <- "Late"
-# rownames(samdf) <- samples.out
+
+id <- metadata$Run
+week <- substr(metadata$Submitter_Id, 4,5)
+samdf <- data.frame(ID = id, Week = week)
+
 
 # Setting phyloseq object
-# ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), 
-#                sample_data(samdf), 
-#                tax_table(taxa))
+ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), 
+                sample_data(samdf), 
+                tax_table(taxa))
 # ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 
 # Make a DNAStringSet object from taxa names in phyloseq
