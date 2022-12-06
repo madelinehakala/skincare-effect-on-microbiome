@@ -6,8 +6,11 @@
 #BiocManager::install(version = "3.15")
 #BiocManager::install("dada2", version = "3.15")
 
-save.image(file = "120322.Rdata")
-#load("120322.Rdata")
+
+#troubleshoot phyloseq object + visualizations (alpha diversity looks funky)
+
+save.image(file = "120622.Rdata")
+#load("120622.Rdata")
 
 
 # Load dada2 and check the version
@@ -138,44 +141,26 @@ theme_set(theme_bw())
 metadata <- read.table(file = 'Metadata.txt', sep = ',', header = TRUE)
 View(metadata)
 
-
-id <- metadata$Run
-week <- substr(metadata$Submitter_Id, 4,5)
-samdf <- data.frame(ID = id, Week = week)
+samples.out <- rownames(seqtab.nochim)
+subject <- substr(metadata$Submitter_Id, 6,8)
+week <- substr(metadata$Submitter_Id, 4,4)
+samdf <- data.frame(Subject = subject, Week = week)
+rownames(samdf) <- samples.out
 
 
 # Setting phyloseq object
-ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), 
-                sample_data(samdf), 
+ps_data <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), sample_names(samdf), 
                 tax_table(taxa))
-# ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 
-# Make a DNAStringSet object from taxa names in phyloseq
-# dna <- Biostrings::DNAStringSet(taxa_names(ps))
-# Change the names of the DNA sequences to match the names of the species
-# names(dna) <- taxa_names(ps)
-#merge phyloseq object with dna sequence data
-# ps <- merge_phyloseq(ps, dna)
-# assign names to the taxa of a phyloseq object
-# taxa_names(ps) <- paste0("ASV", seq(ntaxa(ps)))
-# ps
+#alpha diversity
 
-# Graph features
-# plot_richness(ps, x="Day", measures=c("Shannon", "Simpson"), color="When")
+plot_richness(ps_data)
 
-# Transform data to proportions as appropriate for Bray-Curtis distances
-# ps.prop <- transform_sample_counts(ps, function(otu) otu/sum(otu))
-# ord.nmds.bray <- ordinate(ps.prop, method="NMDS", distance="bray")
+#bar plot
 
-# Set more graph features
-# plot_ordination(ps.prop, ord.nmds.bray, color="When", title="Bray NMDS")
+top20 <- names(sort(taxa_sums(ps_data), decreasing=TRUE))[1:20]
+ps.top20 <- transform_sample_counts(ps_data, function(OTU) OTU/sum(OTU))
+ps.top20 <- prune_taxa(top20, ps.top20)
+plot_bar(ps.top20, fill="Family") #+ facet_wrap(~When, scales="free_x")
 
-# This code sorts the OTUs by the decreasing value of the taxa_sums function. This function will return the sum of the OTUs for each taxa. 
-# The names of the OTUs are then displayed using the first 20 numbers of the list of OTUs.
-# top20 <- names(sort(taxa_sums(ps), decreasing=TRUE))[1:20]
-# The next step is to transform the sample counts of the OTUs. The transform_sample_counts function will take the OTUs and divide it by the sum of all of the OTUs.
-# The next step is to prune the taxa. The prune_taxa function will only display the top 20 OTUs. 
-# ps.top20 <- transform_sample_counts(ps, function(OTU) OTU/sum(OTU))
-# ps.top20 <- prune_taxa(top20, ps.top20)
-# The final code will plot the bar chart. In this chart, the x axis is the day, the fill is the family, and the facet will wrap the when part of the data. The scales are set to be "free" on the x axis.
-# plot_bar(ps.top20, x="Day", fill="Family") + facet_wrap(~When, scales="free_x")
+
