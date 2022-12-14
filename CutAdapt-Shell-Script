@@ -2,97 +2,49 @@
 # To install Cutadapt: python3 -m pip install --user --upgrade cutadapt
 # To run Cutadapt (must include full path): ~/.local/bin/cutadapt --version
 
-#install using 
-python3 -m pip install --user --upgrade cutadapt
-
-#run using
+#load cutadapt
 ~/.local/bin/cutadapt --version
-#to enable paired end trimming, provide two input files and a second output file 
-#with the -p option (this is the short form of --paired-output)
 
-#should we be doing quality trimming?
+#define variables for the primers (strings)
+#overhand regions have been removed from the primer sequences
+#TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG for the forward primers
+#GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG for the reverse primers
 
+firstPrimer_F="CCTACGGGNGGCWGCAG"
+firstPrimer_R="GACTACHVGGGTATCTAATCC"
 
-#run cutadapt with the first primer (16S v34_F and 16S v34_R)
-~/.local/bin/cutadapt -a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCCTACGGGNGGCWGCAG -A GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC -o KoreanSkincareTrimmedData/out.1.fastq -p KoreanSkincareTrimmedData/out.2.fastq KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz KoreanSkincareRawSequenceData/ERR5924075_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
+secondPrimer_F="NCCTACGGGNGGCWGCAG"
+secondPrimer_R="NGACTACHVGGGTATCTAATCC"
 
-#output 
+thirdPrimer_F="NNCCTACGGGNGGCWGCAG"
+thirdPrimer_R="NNGACTACHVGGGTATCTAATCC"
 
-# Minimum overlap: 3
-# No. of allowed errors:
-# 1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4
-# 
-# Bases preceding removed adapters:
-#   A: 36.4%
-#   C: 0.3%
-#   G: 23.0%
-#   T: 40.3%
-#   none/other: 0.0%
-# 
-# Overview of removed sequences
-# length  count   expect  max.err error counts
-# 3       329     1506.8  0       329
-# 4       1       376.7   0       1
-# 
-# 
-# === Second read: Adapter 2 ===
-# 
-# Sequence: GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGACTACHVGGGTATCTAATCC; Type: regular 3'; Length: 55; Trimmed: 110 times
-# 
-# Minimum overlap: 3
-# No. of allowed errors:
-# 1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4; 50-55 bp: 5
-# 
-# Bases preceding removed adapters:
-#   A: 27.3%
-#   C: 16.4%
-#   G: 9.1%
-#   T: 47.3%
-#   none/other: 0.0%
-# 
-# Overview of removed sequences
-# length  count   expect  max.err error counts
-# 3       97      1506.8  0       97
-# 4       9       376.7   0       9
-# 5       4       94.2    0       4
+fourthPrimer_F="NNNCCTACGGGNGGCWGCAG"
+fourthPrimer_R="NNNGACTACHVGGGTATCTAATCC"
 
+#run cutadapt using all 4 forward and reverse primers by calling the variables
+#for i in range 075 to 149
+#do cutadapt for both forward and reverse ERR5924${i} reads
+#loops iterate through all files in the CopyOfKoreanSkincareRawSequenceData folder
 
-#figure out loops???
-
-#for File in KoreanSkincareRawSequenceData; do <cutadapt>
-
-#this part is based on tutorial here:
-#https://github.com/raynamharris/Shell_Intro_for_Bioinformatics_STG/blob/master/lessons/06_ForLoops.md
-
-#create labels to separate _1 and _2 files into 
-#different categories
-
-#change working directory
-cd KoreanSkincareRawSequenceData
-
-#loop through files to output only forward reads
- for i in *_1.fastq.gz
- do
-    echo $i
- done
- #success!
- 
- #create a subset of reverse reads using this format
- #newvariablename=${oldvariablename//oldtext/newtext}
- for i in *sequencing_1.fastq.gz
-   do
-    j=${i//sequencing_1.fastq.gz/sequencing_2.fastq.gz}
-    echo "do something to $i and also to $j
-   done
-   
- #adapted from dr burns's code
-for read1 in *sequencing_1.fastq.gz
-do
-read2 =$(echo $read1 | sed 's/sequencing_1.fast1.gz/sequencing_2.fastq.gz/')
-out1=$(echo $read1 | sed 's/sequencing_1/sequencing_1.trimmed/')
-out2=$(echo $read2 | sed 's/sequencing_2/sequencing_2.trimmed/')
-#cutadapt
+#option a
+for i in $(seq 075 149)
+do 
+  ~/.local/bin/cutadapt -a $firstPrimer_F -a $secondPrimer_F -a $thirdPrimer_F -a $fourthPrimer_F \
+  -A $firstPrimer_R -A $secondPrimer_R -A $thirdPrimer_R -A $fourthPrimer_R \
+  -o KoreanSkincareTrimmedReads_a/Trimmed_ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz \
+  -p KoreanSkincareTrimmedReads_a/Trimmed_ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz \
+  CopyOfKoreanSkincareRawSequenceData/ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz \
+  CopyOfKoreanSkincareRawSequenceData/ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
 done
 
-#can't get this part to work :( 
- 
+#option g
+for i in $(seq 075 149)
+do 
+  ~/.local/bin/cutadapt -g $firstPrimer_F -g $secondPrimer_F -g $thirdPrimer_F -g $fourthPrimer_F \
+  -G $firstPrimer_R -G $secondPrimer_R -G $thirdPrimer_R -G $fourthPrimer_R \
+  -o KoreanSkincareTrimmedReads_g/Trimmed_ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz \
+  -p KoreanSkincareTrimmedReads_g/Trimmed_ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz \
+  CopyOfKoreanSkincareRawSequenceData/ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_1.fastq.gz \
+  CopyOfKoreanSkincareRawSequenceData/ERR5924${i}_Illumina_MiSeq_paired_end_sequencing_2.fastq.gz
+done
