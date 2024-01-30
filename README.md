@@ -1,4 +1,4 @@
-# KoreanSkincareMicrobiome
+# Effect of a Korean Skincare Product on the Facial Microbiome
 
 Analysis of Effect of the skincare product on facial skin microbial structure and biophysical parameters: A pilot study
 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8494714/)
